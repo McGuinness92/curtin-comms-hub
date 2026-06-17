@@ -1,0 +1,408 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px}
+.hub-header{padding:1rem 0 0.75rem}
+.hub-title{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.hub-sub{font-size:13px;color:var(--color-text-secondary)}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;padding:0.75rem 0;border-top:0.5px solid var(--color-border-tertiary);border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+.filter-block{display:flex;flex-direction:column;gap:5px}
+.filter-block-label{font-size:11px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em;font-weight:500}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:12px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .12s;user-select:none}
+.chip:hover{background:var(--color-background-secondary)}
+.chip.active{background:var(--color-background-tertiary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.stats-bar{display:flex;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
+.stat{font-size:12px;color:var(--color-text-secondary)}<br>.stat span{font-weight:500;color:var(--color-text-primary)}
+.timeline-wrap{display:flex;flex-direction:column;gap:0}
+.phase-block{margin-bottom:1.25rem}
+.phase-header{display:flex;align-items:center;gap:10px;padding:6px 0;margin-bottom:6px}
+.phase-line{flex:1;height:0.5px;background:var(--color-border-tertiary)}
+.phase-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);white-space:nowrap;padding:3px 10px;border:0.5px solid var(--color-border-secondary);border-radius:10px;background:var(--color-background-secondary)}
+.phase-header.milestone .phase-label{color:#A32D2D;border-color:#F09595;background:#FCEBEB}
+.phase-header.milestone .phase-line{background:#F09595}
+.phase-header.info .phase-label{color:#185FA5;border-color:#B5D4F4;background:#E6F1FB}
+.phase-header.info .phase-line{background:#B5D4F4}
+.phase-header.blackout .phase-label{color:#444441;border-color:#D3D1C7;background:#F1EFE8}
+.phase-header.blackout .phase-line{background:#D3D1C7}
+.events-grid{display:flex;flex-direction:column;gap:3px}
+.date-group{margin-bottom:6px}
+.date-row{display:grid;grid-template-columns:88px 1fr;gap:8px;align-items:start}
+.date-col{font-size:11px;color:var(--color-text-tertiary);padding-top:6px;white-space:nowrap}
+.events-col{display:flex;flex-wrap:wrap;gap:4px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;font-size:12px;border:0.5px solid transparent;cursor:default;transition:opacity .12s}
+.pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.pill .pname{font-weight:500;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill .ptag{font-size:10px;padding:1px 5px;border-radius:8px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.pill .powner{font-size:10px;color:inherit;opacity:.6;white-space:nowrap}
+.pill .pstatus{font-size:9px;padding:1px 5px;border-radius:8px;margin-left:2px}
+/* Channel colours */
+.ch-email{background:#E6F1FB;border-color:#B5D4F4;color:#0C447C}
+.ch-email .dot{background:#185FA5}
+.ch-email .ptag{background:#B5D4F4;color:#0C447C}
+.ch-sms{background:#EAF3DE;border-color:#C0DD97;color:#27500A}
+.ch-sms .dot{background:#3B6D11}
+.ch-sms .ptag{background:#C0DD97;color:#27500A}
+.ch-call{background:#FAEEDA;border-color:#FAC775;color:#633806}
+.ch-call .dot{background:#854F0B}
+.ch-call .ptag{background:#FAC775;color:#633806}
+.ch-social{background:#EEEDFE;border-color:#CECBF6;color:#3C3489}
+.ch-social .dot{background:#534AB7}
+.ch-social .ptag{background:#CECBF6;color:#3C3489}
+.ch-web{background:#FBEAF0;border-color:#F4C0D1;color:#72243E}
+.ch-web .dot{background:#993556}
+.ch-web .ptag{background:#F4C0D1;color:#72243E}
+.ch-event{background:#F1EFE8;border-color:#D3D1C7;color:#444441}
+.ch-event .dot{background:#5F5E5A}
+.ch-event .ptag{background:#D3D1C7;color:#444441}
+/* Status */
+.s-cancelled{opacity:.45;text-decoration:line-through}
+.s-cancelled .pstatus{background:#F7C1C1;color:#A32D2D}
+.legend{display:flex;gap:12px;flex-wrap:wrap;padding:12px 0 4px;border-top:0.5px solid var(--color-border-tertiary);margin-top:8px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.no-results{padding:2rem 0;text-align:center;font-size:13px;color:var(--color-text-secondary)}
+</style>
+
+<h2 class="sr-only">Semester 1 2026 comms schedule — interactive timeline with channel and audience filters</h2>
+
+<div class="hub-header">
+  <div class="hub-title">Semester 1 2026 — Comms Schedule</div>
+  <div class="hub-sub">Curtin University · Future Students, Domestic Recruitment & Admissions</div>
+</div>
+
+<div class="toolbar">
+  <div class="filter-block">
+    <div class="filter-block-label">Channel</div>
+    <div class="chips" id="ch-filters">
+      <span class="chip active" data-val="all">All</span>
+      <span class="chip" data-val="email">Email</span>
+      <span class="chip" data-val="sms">SMS</span>
+      <span class="chip" data-val="call">Calls</span>
+      <span class="chip" data-val="social">Social</span>
+      <span class="chip" data-val="web">Web / Digital</span>
+      <span class="chip" data-val="event">Events</span>
+    </div>
+  </div>
+  <div class="filter-block">
+    <div class="filter-block-label">Audience</div>
+    <div class="chips" id="aud-filters">
+      <span class="chip active" data-val="all">All</span>
+      <span class="chip" data-val="TISC">TISC</span>
+      <span class="chip" data-val="Direct">Direct</span>
+      <span class="chip" data-val="All">Broad</span>
+    </div>
+  </div>
+  <div class="filter-block">
+    <div class="filter-block-label">Status</div>
+    <div class="chips" id="status-filters">
+      <span class="chip active" data-val="all">All</span>
+      <span class="chip" data-val="Actioned">Actioned</span>
+      <span class="chip" data-val="Cancelled">Hide cancelled</span>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat">Showing <span id="stat-count">–</span> items</div>
+  <div class="stat"><span id="stat-email">–</span> emails</div>
+  <div class="stat"><span id="stat-sms">–</span> SMS</div>
+  <div class="stat"><span id="stat-call">–</span> calls</div>
+</div>
+
+<div class="timeline-wrap" id="timeline"></div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#185FA5"></div>Email</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3B6D11"></div>SMS</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#854F0B"></div>Calls</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#534AB7"></div>Social</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#993556"></div>Web / Digital</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#5F5E5A"></div>Events</div>
+  <div class="legend-item" style="opacity:.5;text-decoration:line-through">Strikethrough = Cancelled</div>
+</div>
+
+<script>
+const PHASES = [
+  {label:'May – Aug 2025: Pre-campaign & EOI', type:'info', dateRange:['2025-05-01','2025-08-31']},
+  {label:'Sep 2025: Early Offer Round 1 + UG Expo', type:'', dateRange:['2025-09-01','2025-09-30']},
+  {label:'EO Round 1 lapse · 12 Sep', type:'milestone', single:'2025-09-12'},
+  {label:'Oct 2025: Early Offer Rounds 2 & 3 + PG Expo', type:'', dateRange:['2025-10-01','2025-10-28']},
+  {label:'EO Round 2 lapse · 3 Oct', type:'milestone', single:'2025-10-03'},
+  {label:'EO Round 3 lapse · 24 Oct', type:'milestone', single:'2025-10-24'},
+  {label:'Comms blackout · 29 Oct – 20 Nov', type:'blackout', dateRange:['2025-10-29','2025-11-20']},
+  {label:'Nov 2025: EO Round 4 + Pathway Support', type:'', dateRange:['2025-11-01','2025-11-30']},
+  {label:'EO Round 4 lapse · 28 Nov', type:'milestone', single:'2025-11-28'},
+  {label:'Dec 2025: EO Round 5 + ATAR + Main Round', type:'', dateRange:['2025-12-01','2025-12-31']},
+  {label:'EO Round 5 lapse · 12 Dec', type:'milestone', single:'2025-12-12'},
+  {label:'ATAR results released · 19 Dec', type:'milestone', single:'2025-12-19'},
+  {label:'TISC Main Round · 24 Dec', type:'milestone', single:'2025-12-24'},
+  {label:'Jan 2026: Main Round + Second Round + Discovery Day', type:'', dateRange:['2026-01-01','2026-01-31']},
+  {label:'MR offer lapse · 11 Jan', type:'milestone', single:'2026-01-11'},
+  {label:'TISC Second Round · 20 Jan', type:'milestone', single:'2026-01-20'},
+  {label:'SR offer lapse · 27 Jan', type:'milestone', single:'2026-01-27'},
+  {label:'Feb 2026: Final conversion window', type:'', dateRange:['2026-02-01','2026-02-28']},
+  {label:'Sem 1 Direct Apps Close · 3 Feb', type:'milestone', single:'2026-02-03'},
+];
+
+const ITEMS = [
+  // May-Aug pre-campaign
+  {date:'2025-05-01',name:'S1 Applications Open',ch:'event',aud:'All',owner:'',status:'Actioned'},
+  {date:'2025-06-03',name:'TISC Applications Open',ch:'event',aud:'TISC',owner:'',status:'Actioned'},
+  {date:'2025-08-12',name:'EOI List: S1 apps now open',ch:'email',aud:'Direct',owner:'Natalie',status:'Actioned'},
+  // Sep R1
+  {date:'2025-09-01',name:'Early Offer Round 1',ch:'event',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-09-01',name:'Early Offers email',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-09-01',name:'Pathway Advice email',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-09-01',name:'Competitive Course Unsuccessful Advice',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-09-01',name:'Early Offers Page: Sep update',ch:'web',aud:'TISC',owner:'Digital',status:'Actioned'},
+  {date:'2025-09-01',name:'Curtin Connect – Early Offer Advice Month',ch:'event',aud:'TISC',owner:'',status:'Actioned'},
+  {date:'2025-09-04',name:'UG Course Expo',ch:'event',aud:'All',owner:'',status:'Actioned'},
+  {date:'2025-09-04',name:'Web Banner: UG Course Expo',ch:'web',aud:'All',owner:'Mat',status:'Actioned'},
+  {date:'2025-09-05',name:'Post Event Email (UG Expo)',ch:'email',aud:'All',owner:'Natalie',status:'Actioned'},
+  {date:'2025-09-09',name:'Nudge: Accept Early Offer v1 (R1)',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-09-12',name:'Nudge: Accept EO – Non-Competitive SMS (R1)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-09-12',name:'Nudge: Accept EO – Competitive SMS (R1)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-09-12',name:'Nudge: Accept EO – Competitive Call (R1)',ch:'call',aud:'TISC',owner:'Amy S',status:'Actioned'},
+  {date:'2025-09-19',name:'Event Promo Email (Y12 parents)',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  // Event promo UG expo
+  {date:'2025-08-22',name:'Event Promo: UG Course Expo (Invite)',ch:'email',aud:'All',owner:'Natalie',status:'Actioned'},
+  {date:'2025-09-05',name:'Event Promo: UG Course Expo (2nd Chance)',ch:'email',aud:'All',owner:'Natalie',status:'Actioned'},
+  {date:'2025-09-12',name:'Event Promo: UG Course Expo (Last Chance)',ch:'email',aud:'All',owner:'Natalie',status:'Actioned'},
+  // R2
+  {date:'2025-09-22',name:'Early Offer Round 2',ch:'event',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-09-22',name:'Early Offers email (R2)',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-09-23',name:'Pathway Advice email (R2)',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-09-23',name:'Competitive Course Unsuccessful (R2)',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-09-26',name:'Nurture: Campus Life',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-09-30',name:'Nudge: Accept EO v1 (R2)',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  // Oct R2 lapse + R3
+  {date:'2025-10-02',name:'SMS Nudge: Non-Competitive (R2)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-10-02',name:'SMS Nudge: Competitive (R2)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-10-02',name:'Call Nudge: Competitive (R2)',ch:'call',aud:'TISC',owner:'Amy S',status:'Actioned'},
+  {date:'2025-10-08',name:'PG Expo',ch:'event',aud:'All',owner:'',status:'Actioned'},
+  {date:'2025-10-08',name:'Web Banner: PG Expo',ch:'web',aud:'All',owner:'Mat',status:'Actioned'},
+  {date:'2025-10-08',name:'Event Promo: PG Expo (Invite)',ch:'email',aud:'All',owner:'Natalie',status:'Actioned'},
+  {date:'2025-10-10',name:'CC – Mature Age Advice Month',ch:'event',aud:'TISC',owner:'',status:'Actioned'},
+  {date:'2025-10-10',name:'Event Promo: CC Mature Age',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-10-13',name:'Early Offer Round 3',ch:'event',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-10-13',name:'Early Offers email (R3)',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-10-13',name:'Pathway Advice email (R3)',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-10-13',name:'Competitive Course Unsuccessful (R3)',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-10-14',name:'EOI: S1 apps open reminder',ch:'email',aud:'Direct',owner:'Natalie',status:'Actioned'},
+  {date:'2025-10-16',name:'Event Promo: PG Expo (2nd Chance)',ch:'email',aud:'All',owner:'Natalie',status:'Actioned'},
+  {date:'2025-10-17',name:'Nudge: Accept EO v1 (R3)',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-10-23',name:'SMS Nudge: Non-Competitive (R3)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-10-23',name:'SMS Nudge: Competitive (R3)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-10-23',name:'Call Nudge: Competitive (R3)',ch:'call',aud:'TISC',owner:'Amy S',status:'Actioned'},
+  {date:'2025-10-24',name:'Event Reminder Email: PG Expo',ch:'email',aud:'All',owner:'Natalie',status:'Actioned'},
+  {date:'2025-10-24',name:'Event Reminder SMS: PG Expo',ch:'sms',aud:'All',owner:'Natalie',status:'Actioned'},
+  {date:'2025-10-27',name:'Nurture: English',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-10-31',name:'Event Promo: PG Expo (Last Chance)',ch:'email',aud:'All',owner:'Natalie',status:'Actioned'},
+  {date:'2025-10-31',name:'Post Event Email: PG Expo',ch:'email',aud:'All',owner:'Olivia/Natalie',status:'Actioned'},
+  // Nov
+  {date:'2025-11-01',name:'CC – Pathway & App Support Month',ch:'event',aud:'Direct',owner:'',status:'Actioned'},
+  {date:'2025-11-07',name:'Event Promo: CC Pathway Month (non-TISC)',ch:'email',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2025-11-12',name:'Deferred Calls (admitted, not enrolled)',ch:'call',aud:'Direct',owner:'Amy S',status:'Actioned'},
+  {date:'2025-11-12',name:'UniReady In Schools – Apply to Curtin',ch:'email',aud:'TISC',owner:'Joan S',status:'Actioned'},
+  {date:'2025-11-19',name:'SMS: Incomplete App – Regional PG',ch:'sms',aud:'Direct',owner:'Jasmine',status:'Actioned'},
+  {date:'2025-11-20',name:'Incomplete App Nudge (UG & PG)',ch:'email',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2025-11-21',name:'TISC: Preferences, Pathways & Portfolios',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-11-21',name:'Equity (RRR): S1 Accom email',ch:'email',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2025-11-24',name:'Early Offer Round 4',ch:'event',aud:'TISC',owner:'Marius',status:'Actioned'},
+  {date:'2025-11-24',name:'Early Offers email (R4)',ch:'email',aud:'TISC',owner:'Marius',status:'Actioned'},
+  {date:'2025-11-24',name:'SMS Nudge: All Unaccepted (R4)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-11-26',name:'UniReady – Apply to Curtin',ch:'email',aud:'Direct',owner:'Joan S',status:'Actioned'},
+  {date:'2025-11-27',name:'SMS Nudge: Competitive (R4)',ch:'sms',aud:'TISC',owner:'Mat',status:'Cancelled'},
+  {date:'2025-11-27',name:'Call Nudge: Competitive (R4)',ch:'call',aud:'TISC',owner:'Amy S',status:'Cancelled'},
+  {date:'2025-11-24',name:'SMS: Unaccepted Offer (UG/PG non-equity)',ch:'sms',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2025-11-24',name:'SMS: Unaccepted Offer (UG/PG RRR)',ch:'sms',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2025-11-24',name:'Call: Unaccepted Offer ATSI',ch:'call',aud:'Direct',owner:'Corey',status:'Cancelled'},
+  {date:'2025-11-26',name:'SMS: Incomplete App – Regional UG',ch:'sms',aud:'Direct',owner:'Jasmine',status:'Cancelled'},
+  {date:'2025-12-01',name:'Portfolio Deadline Reminder',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  // Dec
+  {date:'2025-12-03',name:'Early Offer Round 5',ch:'event',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-12-03',name:'Early Offers email (R5)',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-12-03',name:'Web Banner: Y12 Help Day',ch:'web',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-12-04',name:'EO Page: December update',ch:'web',aud:'TISC',owner:'Digital',status:'Actioned'},
+  {date:'2025-12-04',name:'Non-Offer Support Email',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-12-04',name:'Social: FB + IG + Stories (Y12HD)',ch:'social',aud:'TISC',owner:'Kimberley',status:'Actioned'},
+  {date:'2025-12-08',name:'Nudge: Accept EO v2 (R5)',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-12-11',name:'SMS Nudge: All Unaccepted (R5)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-12-11',name:'SMS Nudge: Competitive (R5)',ch:'sms',aud:'TISC',owner:'Mat',status:'Cancelled'},
+  {date:'2025-12-11',name:'Call Nudge: Competitive (R5)',ch:'call',aud:'TISC',owner:'Amy S',status:'Cancelled'},
+  {date:'2025-12-15',name:'TISC: Good Luck / Y12 Help Day email',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-12-14',name:'Social: ATAR Results (IG + Shorts)',ch:'social',aud:'TISC',owner:'Kimberley',status:'Actioned'},
+  {date:'2025-12-19',name:'TISC: Good Luck Results SMS',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-12-19',name:'Social: FB + Stories (Y12 Help Day)',ch:'social',aud:'TISC',owner:'Kimberley',status:'Actioned'},
+  {date:'2025-12-20',name:'Y12 Help Day / CC Main Round Advice Day',ch:'event',aud:'TISC',owner:'',status:'Actioned'},
+  {date:'2025-12-20',name:'Event Registration Reminder (Y12HD)',ch:'email',aud:'TISC',owner:'Natalie',status:'Actioned'},
+  {date:'2025-12-20',name:'TISC: Applications Close – Main Round',ch:'event',aud:'TISC',owner:'',status:'Actioned'},
+  {date:'2025-12-22',name:'TISC: Open Main Round email',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2025-12-24',name:'TISC Main Round Offers',ch:'email',aud:'TISC',owner:'Esther/Marius',status:'Actioned'},
+  {date:'2025-12-24',name:'Early Offer Confirmation Emails',ch:'email',aud:'TISC',owner:'Esther/Marius',status:'Actioned'},
+  {date:'2025-12-24',name:'Get Advice Emails (No Outcome)',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-12-24',name:'Maths Methods Summer Unit email',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2025-12-24',name:'Social: CC Main Round Advice Day',ch:'social',aud:'TISC',owner:'Kimberley',status:'Actioned'},
+  // Jan
+  {date:'2026-01-04',name:'Final Conversion Window opens / Social',ch:'social',aud:'TISC',owner:'Kimberley',status:'Actioned'},
+  {date:'2026-01-06',name:'Call Campaign: Accept MR (1st Pref)',ch:'call',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-07',name:'Nudge: Accept & TISC Safety Net email',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-07',name:'Faculty Welcome SMS (MR)',ch:'sms',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2026-01-11',name:'SMS: Nudge Accept MR (lapse day)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-11',name:'Nudge: Accept Main Round email',ch:'email',aud:'TISC',owner:'Mat',status:'Cancelled'},
+  {date:'2026-01-14',name:'TISC Apps Close: Second Round',ch:'event',aud:'TISC',owner:'',status:'Actioned'},
+  {date:'2026-01-14',name:'SMS: Second Round Apps Close Tonight',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-15',name:'SMS: Unaccepted Offer Lapsing (non-equity)',ch:'sms',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-15',name:'SMS: Unaccepted Offer Lapsing (equity)',ch:'sms',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-19',name:'TISC Second Round / EOI Reminder',ch:'event',aud:'TISC',owner:'',status:'Actioned'},
+  {date:'2026-01-19',name:'EOI: S1 apps closing soon email',ch:'email',aud:'Direct',owner:'Olivia/Natalie',status:'Actioned'},
+  {date:'2026-01-19',name:'Call: Unaccepted Offer ATSI',ch:'call',aud:'Direct',owner:'Austin',status:'Actioned'},
+  {date:'2026-01-20',name:'Second Round Offers email',ch:'email',aud:'TISC',owner:'Jyoti',status:'Actioned'},
+  {date:'2026-01-20',name:'Faculty Welcome SMS (SR)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-21',name:'No Second Round Offer email',ch:'email',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-22',name:'UG Discovery Day',ch:'event',aud:'All',owner:'',status:'Actioned'},
+  {date:'2026-01-22',name:'Calling: TISC Unaccepted Offers',ch:'call',aud:'TISC',owner:'Reva/Amy',status:'Actioned'},
+  {date:'2026-01-28',name:'Event Promo: UG Discovery Day',ch:'email',aud:'All',owner:'Olivia/Natalie',status:'Actioned'},
+  {date:'2026-01-28',name:'Faculty Welcome emails × 5 faculties',ch:'email',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-27',name:'SMS: Last Chance to Accept (SR)',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-27',name:'SMS: Last Chance – B Health Sci only',ch:'sms',aud:'TISC',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-27',name:'Nudge: Accept Second Round email',ch:'email',aud:'TISC',owner:'Mat',status:'Cancelled'},
+  {date:'2026-01-29',name:'EOI: Apps closing soon SMS',ch:'sms',aud:'Direct',owner:'Olivia/Natalie',status:'Actioned'},
+  {date:'2026-01-30',name:'SMS: Unaccepted Offer Lapsing',ch:'sms',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2026-01-30',name:'Offer Support Calls',ch:'call',aud:'Direct',owner:'Reva',status:'Actioned'},
+  {date:'2026-01-30',name:'SMS: Unsubmitted App (apps close soon)',ch:'sms',aud:'Direct',owner:'Jasmine',status:'Cancelled'},
+  // Feb
+  {date:'2026-02-03',name:'Web Banner: Get Advice & Pathway Support',ch:'web',aud:'Direct',owner:'Mat',status:'Actioned'},
+  {date:'2026-02-03',name:'EO Page: February update',ch:'web',aud:'TISC',owner:'Digital',status:'Actioned'},
+  {date:'2026-02-03',name:'Post Event Email: UG Discovery Day',ch:'email',aud:'All',owner:'Olivia/Natalie',status:'Actioned'},
+  // Ongoing / support
+  {date:'2025-09-01',name:'IVR Messages (ongoing throughout)',ch:'call',aud:'All',owner:'Felicity',status:'Actioned'},
+  {date:'2025-09-01',name:'Go To Market: UG Campaign (ongoing)',ch:'social',aud:'All',owner:'Acquisition',status:'Actioned'},
+  {date:'2025-09-01',name:'Go To Market: PG Campaign (ongoing)',ch:'social',aud:'All',owner:'Acquisition',status:'Actioned'},
+  {date:'2025-12-02',name:'TISC Summer Help Page (live)',ch:'web',aud:'TISC',owner:'Digital',status:'Actioned'},
+  {date:'2025-11-05',name:'Event Landing Page: Y12 Help Day',ch:'web',aud:'TISC',owner:'Mat',status:'Actioned'},
+];
+
+let activeCh='all', activeAud='all', activeStatus='all';
+
+function chClass(ch){
+  return {email:'ch-email',sms:'ch-sms',call:'ch-call',social:'ch-social',web:'ch-web',event:'ch-event'}[ch]||'ch-event';
+}
+function chLabel(ch){
+  return {email:'Email',sms:'SMS',call:'Call',social:'Social',web:'Web',event:'Event'}[ch]||ch;
+}
+function monthLabel(dateStr){
+  const d=new Date(dateStr+'T00:00:00');
+  return d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+}
+
+function getPhaseItems(phase, items){
+  if(phase.single){
+    return items.filter(i=>i.date===phase.single);
+  }
+  if(phase.dateRange){
+    const [s,e]=phase.dateRange;
+    return items.filter(i=>i.date>=s&&i.date<=e);
+  }
+  return [];
+}
+
+function render(){
+  const filtered = ITEMS.filter(i=>{
+    if(activeCh!=='all'&&i.ch!==activeCh) return false;
+    if(activeAud!=='all'&&i.aud!==activeAud) return false;
+    if(activeStatus==='Actioned'&&i.status==='Cancelled') return false;
+    return true;
+  });
+
+  // stats
+  document.getElementById('stat-count').textContent=filtered.length;
+  document.getElementById('stat-email').textContent=filtered.filter(i=>i.ch==='email').length;
+  document.getElementById('stat-sms').textContent=filtered.filter(i=>i.ch==='sms').length;
+  document.getElementById('stat-call').textContent=filtered.filter(i=>i.ch==='call').length;
+
+  const tl=document.getElementById('timeline');
+  tl.innerHTML='';
+
+  let anyVisible=false;
+
+  PHASES.forEach(phase=>{
+    const phaseItems=getPhaseItems(phase, filtered);
+    
+    // For non-milestone phases, group by date
+    if(!phase.single){
+      if(phaseItems.length===0) return;
+      anyVisible=true;
+
+      const ph=document.createElement('div');
+      ph.className='phase-block';
+      ph.innerHTML=`<div class="phase-header ${phase.type}"><div class="phase-line"></div><span class="phase-label">${phase.label}</span><div class="phase-line"></div></div>`;
+      
+      // group by date
+      const byDate={};
+      phaseItems.forEach(item=>{
+        if(!byDate[item.date]) byDate[item.date]=[];
+        byDate[item.date].push(item);
+      });
+      const eg=document.createElement('div');
+      eg.className='events-grid';
+      Object.keys(byDate).sort().forEach(dt=>{
+        const dg=document.createElement('div');
+        dg.className='date-group';
+        const dr=document.createElement('div');
+        dr.className='date-row';
+        const dc=document.createElement('div');
+        dc.className='date-col';
+        dc.textContent=monthLabel(dt);
+        const ec=document.createElement('div');
+        ec.className='events-col';
+        byDate[dt].forEach(item=>{
+          ec.appendChild(makePill(item));
+        });
+        dr.appendChild(dc);
+        dr.appendChild(ec);
+        dg.appendChild(dr);
+        eg.appendChild(dg);
+      });
+      ph.appendChild(eg);
+      tl.appendChild(ph);
+    } else {
+      // milestone marker — always show
+      anyVisible=true;
+      const mh=document.createElement('div');
+      mh.className=`phase-header ${phase.type}`;
+      mh.innerHTML=`<div class="phase-line"></div><span class="phase-label">${phase.label}</span><div class="phase-line"></div>`;
+      tl.appendChild(mh);
+    }
+  });
+
+  if(!anyVisible){
+    tl.innerHTML='<div class="no-results">No items match the current filters.</div>';
+  }
+}
+
+function makePill(item){
+  const p=document.createElement('div');
+  p.className=`pill ${chClass(item.ch)} ${item.status==='Cancelled'?'s-cancelled':''}`;
+  p.innerHTML=`<div class="dot"></div><span class="pname">${item.name}</span><span class="ptag">${chLabel(item.ch)}</span>${item.owner?`<span class="powner">${item.owner}</span>`:''}`;
+  return p;
+}
+
+// Filter wiring
+function wireChips(containerId, setter, getActive){
+  document.getElementById(containerId).querySelectorAll('.chip').forEach(c=>{
+    c.addEventListener('click',()=>{
+      document.getElementById(containerId).querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+      setter(c.dataset.val);
+      render();
+    });
+  });
+}
+wireChips('ch-filters', v=>activeCh=v);
+wireChips('aud-filters', v=>activeAud=v);
+wireChips('status-filters', v=>activeStatus=v);
+
+render();
+</script>
